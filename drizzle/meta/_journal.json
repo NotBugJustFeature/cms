@@ -1,13 +1,5 @@
 {
-  "version": "7",
-  "dialect": "mysql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1726393793401,
-      "tag": "20240915094953_marvelous_pepper_potts",
-      "breakpoints": true
-    }
-  ]
+    "version": "7",
+    "dialect": "mysql",
+    "entries": []
 }

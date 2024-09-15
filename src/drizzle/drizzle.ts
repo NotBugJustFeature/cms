@@ -24,9 +24,12 @@ function generateCol(column: Column) {
             throw new Error(`Unknown column type: ${column.type}`)
     }
 }
-
+type tablenames = 'users' | 'posts'
 // Generate table schemas dynamically
-const schemas: Record<string, ReturnType<typeof mysqlTable>> = {}
+const schemas: Record<tablenames, ReturnType<typeof mysqlTable> | undefined> = {
+    users: undefined,
+    posts: undefined
+}
 
 tablesData.tables.forEach((table: Table) => {
     const columns: Record<string, ReturnType<typeof generateCol>> = {}
@@ -35,10 +38,10 @@ tablesData.tables.forEach((table: Table) => {
         columns[column.name] = generateCol(column)
     })
 
-    schemas[table.name] = mysqlTable(table.name, columns)
+    schemas[table.name as tablenames] = mysqlTable(table.name, columns)
 })
 // export const user = [...schemaArr]
-// export default schemas
-module.exports = schemas
+export default schemas
+// module.exports = schemas
 // export['user'] = schemas['user']
 // export

@@ -4,8 +4,8 @@
             "name": "users",
             "columns": [
                 { "name": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
-                { "name": "name", "type": "text", "length": 255 },
-                { "name": "email", "type": "text", "unique": true }
+                { "name": "full_name", "type": "text" },
+                { "name": "phone", "type": "text", "unique": true, "length": 255 }
             ]
         },
         {
@@ -13,8 +13,7 @@
             "columns": [
                 { "name": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
                 { "name": "title", "type": "text", "length": 255 },
-                { "name": "body", "type": "text" },
-                { "name": "userId", "type": "integer", "references": "users(id)" }
+                { "name": "content", "type": "text" }
             ]
         }
     ]

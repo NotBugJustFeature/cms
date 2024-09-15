@@ -1,55 +1,87 @@
-import { drizzle, MySql2DrizzleConfig } from 'drizzle-orm/mysql2'
-import mysql from 'mysql2/promise' // Use promise-based MySQL2
-import schema from './schema'
-import { eq, like } from 'drizzle-orm'
-import { log } from 'console'
-import 'fs'
-import tables from './tables.json'
+import fs from 'fs'
+import path from 'path'
+import {
+    int,
+    varchar,
+    text,
+    mysqlTable,
+    MySqlColumn,
+    MySqlTableWithColumns
+} from 'drizzle-orm/mysql-core'
 
-function loadTables() {
-    return require('./tables.json')
+// Define the types based on your JSON schema
+interface Column {
+    name: string
+    type: 'integer' | 'varchar' | 'text'
+    length?: number
+    primaryKey?: boolean
+    autoIncrement?: boolean
+    unique?: boolean
+    references?: string
 }
-console.log(tables)
 
-// Create a MySQL connection pool
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'test_drizzle'
-})
+interface Table {
+    name: string
+    columns: Column[]
+}
 
-export const db = drizzle(pool, {
-    schema,
-    mode: 'default' // or 'strict' based on your needs
-})
-;(async () => {
-    try {
-        console.log('Starting query...')
+interface TablesSchema {
+    tables: Table[]
+}
 
-        // Perform the query
-        let r = await db.query.users.findFirst({
-            where: (users) => eq(users.id, 1)
-        })
-        if (!r) {
-            console.log('User not found')
+// Function to generate a column definition based on JSON
+function generateCol(column: Column): MySqlColumn<any, any> {
+    switch (column.type) {
+        case 'integer': {
+            let intCol = int(column.name)
+            if (column.primaryKey) intCol = intCol.primaryKey()
+            if (column.autoIncrement) intCol = intCol.autoincrement()
+            return intCol as MySqlColumn<any, any>
         }
-        console.log(r)
+        case 'varchar': {
+            return varchar(column.name, { length: column.length ?? 255 }) as MySqlColumn<any, any>
+        }
+        case 'text': {
+            return text(column.name) as MySqlColumn<any, any>
+        }
+        default:
+            throw new Error(`Unknown column type: ${column.type}`)
+    }
+}
 
-        const res = await db.query.users.findMany({
-            where: (users) => like(users.fullName, '%a%')
+// Read the JSON file and generate the schema
+async function generateSchema() {
+    try {
+        const jsonFilePath = path.resolve(__dirname, 'tables.json')
+        const jsonData = fs.readFileSync(jsonFilePath, 'utf-8')
+        const tablesData: TablesSchema = JSON.parse(jsonData)
+
+        const schemas: Record<string, MySqlTableWithColumns<any>> = {}
+
+        tablesData.tables.forEach((table) => {
+            const columns: Record<string, MySqlColumn<any, any>> = {}
+
+            table.columns.forEach((column) => {
+                columns[column.name] = generateCol(column)
+            })
+
+            schemas[table.name] = mysqlTable(table.name, columns) as MySqlTableWithColumns<any>
         })
 
-        const res3 = await db.query['posts'].findMany({})
-        console.log(res3)
+        const outputFilePath = path.resolve(__dirname, 'drizzle-schema.ts')
+        const outputContent = `import { mysqlTable } from 'drizzle-orm/mysql-core';
 
-        console.log('Query result:', res)
+const schemas = ${JSON.stringify(schemas, null, 2)};
+
+export default schemas;
+`
+
+        fs.writeFileSync(outputFilePath, outputContent)
+        console.log('Schema file generated successfully')
     } catch (error) {
-        console.error('Error during query execution:', error)
-    } finally {
-        // Optional: Close the pool when you're done with all queries
-        await pool.end()
+        console.error('Error generating schema file:', error)
     }
+}
 
-    console.log('End of script')
-})()
+// Execute the script
+generateSchema()

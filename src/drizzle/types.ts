@@ -1,4 +1,4 @@
-import { mysqlTable } from 'drizzle-orm/mysql-core'
+import { MySqlTableWithColumns, MySqlColumn } from 'drizzle-orm/mysql-core'
 
 export type ColumnType = 'integer' | 'varchar' | 'text'
 
@@ -8,6 +8,8 @@ export interface Column {
     length?: number
     primaryKey?: boolean
     autoIncrement?: boolean
+    unique?: boolean
+    references?: string
 }
 
 export interface Table {
@@ -19,5 +21,12 @@ export interface TablesSchema {
     tables: Table[]
 }
 
-// Exporting types for use elsewhere
-export type Schemas = Record<string, ReturnType<typeof mysqlTable>>
+export type TableSchemas = {
+    [key: string]: MySqlTableWithColumns<any>
+}
+
+export type ColumnSchemas<T extends TableSchemas> = {
+    [K in keyof T]: {
+        [C in keyof T[K]['columns']]: MySqlColumn<any, any>
+    }
+}
