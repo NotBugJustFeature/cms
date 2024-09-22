@@ -1,7 +1,12 @@
 import { MySqlTableWithColumns, MySqlColumn } from 'drizzle-orm/mysql-core'
 
 export type ColumnType = 'integer' | 'varchar' | 'text'
-
+export type CollectionConfig = {
+    slug: string
+    fields: {
+        [fieldName: string]: string | boolean
+    }[]
+}
 export interface Column {
     name: string
     type: ColumnType

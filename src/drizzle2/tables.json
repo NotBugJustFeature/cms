@@ -1,0 +1,29 @@
+{
+    "tables": [
+        {
+            "name": "users",
+            "columns": [
+                { "name": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+                { "name": "full_name", "type": "text" },
+                { "name": "phone", "type": "varchar", "unique": true, "length": 255 }
+            ]
+        },
+        {
+            "name": "posts",
+            "columns": [
+                { "name": "id", "type": "integer", "primaryKey": true, "autoIncrement": true },
+                { "name": "title", "type": "text", "length": 255 },
+                { "name": "content", "type": "text" }
+            ]
+        }
+    ],
+    "relations": [
+        {
+            "table1": "posts",
+            "table2": "users",
+            "type": "belongsTo",
+            "onDelete": "cascade",
+            "onUpdate": "cascade"
+        }
+    ]
+}

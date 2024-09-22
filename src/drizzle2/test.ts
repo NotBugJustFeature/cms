@@ -1,14 +1,14 @@
-import schema, { NewUser } from './generated-schema' // Adjust path if necessary
-import schemas from './drizzle'
+import schema, { NewUser } from './schema' // Adjust path if necessary
+// import schemas from './drizzle'
 import { drizzle } from 'drizzle-orm/mysql2'
 import mysql from 'mysql2/promise'
 import { eq, like } from 'drizzle-orm'
-import { users } from './drizzle-icing'
+// import { users } from './drizzle-icing'
 
 // console.log(Object.keys(schemas.users))
-Object.values(schemas.users).map((column) => {
-    console.log((column as any).name, (column as any).dataType)
-})
+// Object.values(schemas.users).map((column) => {
+//     console.log((column as any).name, (column as any).dataType)
+// })
 // const schema: Schemas = schemas
 
 const pool = mysql.createPool({
@@ -19,7 +19,7 @@ const pool = mysql.createPool({
 })
 
 export const db = drizzle(pool, {
-    schema: { users: users },
+    schema,
     // schema,
     mode: 'default' // or 'strict' based on your needs
 })
@@ -44,7 +44,7 @@ export const db = drizzle(pool, {
         //     full_name: 'asd',
         //     phone: '1234567890'
         // })
-        await db.insert(schemas.users).values({})
+        await db.insert(schema.users).values({})
         const res3 = await db.query.users.findMany({}) // Use correct table name
         console.log(res3)
 

@@ -1,5 +1,41 @@
 {
-    "version": "7",
-    "dialect": "mysql",
-    "entries": []
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1726951831202,
+      "tag": "20240921205031_fast_sabra",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1726952587194,
+      "tag": "20240921210307_yielding_george_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1726952664400,
+      "tag": "20240921210424_rare_hawkeye",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1726953395137,
+      "tag": "20240921211635_safe_stryfe",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1726954001637,
+      "tag": "20240921212641_nervous_blazing_skull",
+      "breakpoints": true
+    }
+  ]
 }
